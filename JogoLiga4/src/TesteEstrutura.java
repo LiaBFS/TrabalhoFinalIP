@@ -8,6 +8,7 @@ public class TesteEstrutura {
     private char corUser;
     private char corMaquina;
     private char tabuleiro[][] = new char[6][7];
+    private int coluna;
 
 
     public TesteEstrutura() {
@@ -35,11 +36,17 @@ public class TesteEstrutura {
 
         if(terminou==1){
 
-            char resposta;
+            char resposta=' ';
 
             do{
                 System.out.print("Gostaria de iniciar um novo jogo? (s/n): ");
-                resposta = sc.next().toLowerCase().charAt(0);
+                try{
+                    resposta = sc.next().toLowerCase().charAt(0);
+                } catch(Exception ex){
+                    System.out.println("- Resposta inválida - \nTente novamente:");
+                    ex.getMessage();
+                }
+                
                 if(Character.toString(resposta).equals("s")){
                     System.out.println("- Iniciando nova partida -");
                     contaPartidas++;
@@ -55,6 +62,7 @@ public class TesteEstrutura {
             
         } else{
             //ver oq fazer se não retornar 1 (ou seja, não dizer q acabou)
+            //acho q só diz q vai pro próximo round (chama round(); talvez?)
         }
 
         return -1;
@@ -85,7 +93,8 @@ public class TesteEstrutura {
     private void atualizarMatriz(int coluna){
 
         /** pega a coluna da jogada, procura qual a primeira linha disponível e coloca a letra
-            referente a cor do player da célula **/
+            referente a cor do player (caso Rounds for impar é o usuario e 
+            caso for par é maquina) na célula **/
 
     }
 
@@ -93,10 +102,12 @@ public class TesteEstrutura {
 
         for(int linha=0; linha<6; linha++){
             for(int coluna=0; coluna<7; coluna++){
-                System.out.println(tabuleiro[linha][coluna]+" ");
+                System.out.print(tabuleiro[linha][coluna]+" ");
             }
             System.out.println(" ");
         }
+
+        System.out.println();
 
     }
 
@@ -105,13 +116,29 @@ public class TesteEstrutura {
         System.out.println("- Rodada "+contaRounds+" -");
 
         consultarMatriz();
-        
-        System.out.println("Deseja jogar em qual coluna?");
-        try{
-            
-        } catch(Exception ex){
 
-        }
+        //vez do usuario
+        do{
+            System.out.print("Jogar peça na coluna: ");
+            try{
+                coluna = sc.nextInt();        
+            } catch(Exception ex){
+                System.out.println();
+                System.out.println("- Resposta inválida - \nTente novamente:");
+                ex.getMessage();
+            }
+
+            if(coluna<=7 || coluna>=1){
+                break;
+            } else{
+                System.out.println();
+                System.out.println("- Resposta inválida - \nTente novamente (Escolha um número de 1 a 7):");
+            }
+        } while(true);
+        
+        atualizarMatriz(coluna);
+
+        //vez da maquina
 
     }
 
@@ -129,6 +156,7 @@ public class TesteEstrutura {
             } else if(Character.toString(resposta).equals("n")){
                 break;
             } else{
+                System.out.println();
                 System.out.println("- Resposta inválida - \nTente novamente:");
             }
         } while(true);
@@ -143,11 +171,16 @@ public class TesteEstrutura {
             
             if(Character.toString(corUser).equals("V")){
                 corMaquina = 'A';
+                System.out.println("");
                 break;
+
             } else if(Character.toString(corUser).equals("A")){
                 corMaquina = 'V';
+                System.out.println("");
                 break;
+                
             } else{
+                System.out.println();
                 System.out.println("- Resposta inválida - \nTente novamente:");
             }
 
