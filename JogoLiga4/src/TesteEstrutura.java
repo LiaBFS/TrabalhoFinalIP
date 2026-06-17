@@ -71,11 +71,19 @@ public class TesteEstrutura {
 
     // retorna int pra fazer a checagem se finalizou partida (retorna 1) ou não (retorna 0)
     private int partida(){
+
+        //deixar mais pra frente
         
         escolherCor();
         imprimirMatriz();
         round();
 
+        return 0;
+    }
+
+    private int checaVencedor(){
+
+        /** */
         return 0;
     }
 
@@ -99,6 +107,8 @@ public class TesteEstrutura {
     }
 
     private void imprimirMatriz(){
+
+        //atualizarMatriz();
 
         for(int linha=0; linha<6; linha++){
             for(int coluna=0; coluna<7; coluna++){
