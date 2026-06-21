@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class TesteEstrutura {
 
     private int contaPartidas = 1; //pra só pedir p jogar novamente dps de ter finalizado 1 partida
-    private int contaRounds = 1; //pra só checar se ganhou dps do 4° round
+    private int contaRounds = 1;
     private Scanner sc = new Scanner(System.in);
     private char corUser;
     private char corMaquina;
@@ -74,13 +74,31 @@ public class TesteEstrutura {
 
         //deixar mais pra frente
         
+        
         escolherCor();
         imprimirMatriz();
-        round();
+        int venceu = 0;
+
+        do{
+            System.out.println("- Rodada "+contaRounds+" -");
+
+            jogadaUsuario();
+
+            //fazer um if caso o atualizar matriz responder que já está cheio, para fazer o usuário jogar de novo
+            checaVencedor();
+            imprimirMatriz();
+            jogadaMaquina();
+            checaVencedor();
+            imprimirMatriz();
+
+            contaRounds++;
+        }while(venceu==0);
+        
 
         return 0;
     }
 
+    //1 caso teve vencedor 0 caso n teve
     private int checaVencedor(){
 
         /** */
@@ -98,12 +116,17 @@ public class TesteEstrutura {
 
     }
 
-    private void atualizarMatriz(int coluna){
+    private void atualizarMatriz(int colunaJogada, char corJogada){
 
         /** pega a coluna da jogada, procura qual a primeira linha disponível e coloca a letra
-            referente a cor do player (caso Rounds for impar é o usuario e 
-            caso for par é maquina) na célula **/
+            referente a cor do player na célula **/
 
+        for(int linha=6; linha<=0;linha--){
+            if(tabuleiro[linha][colunaJogada]=='B'){
+                tabuleiro[linha][colunaJogada] = corJogada;
+                break;
+            } //vai ter que devolver que já está cheio
+        }
     }
 
     private void imprimirMatriz(){
@@ -119,11 +142,7 @@ public class TesteEstrutura {
 
     }
 
-    private void round(){
-        //VALIDAR SE A RODADA É VÁLIDA (se a coluna já não estiver preenchida)
-
-        //usuário
-        System.out.println("- Rodada "+contaRounds+" -");
+    private void jogadaUsuario(){
 
         consultarMatriz();
 
@@ -146,12 +165,14 @@ public class TesteEstrutura {
             }
         } while(true);
         
-        atualizarMatriz(coluna);
+        atualizarMatriz(coluna,corUser);
 
-        //vez da maquina
+    }
 
-        //MONTAR COM MATH.RANDOM
+    private void jogadaMaquina(){
+        //MARIA
 
+        atualizarMatriz(coluna, corMaquina);
     }
 
     //só p não ter q fazer validação toda vez
