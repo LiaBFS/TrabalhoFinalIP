@@ -108,8 +108,6 @@ public class TesteEstrutura {
 
     private void imprimirMatriz(){
 
-        //atualizarMatriz();
-
         for(int linha=0; linha<6; linha++){
             for(int coluna=0; coluna<7; coluna++){
                 System.out.print(tabuleiro[linha][coluna]+" ");
@@ -122,6 +120,8 @@ public class TesteEstrutura {
     }
 
     private void round(){
+        //VALIDAR SE A RODADA É VÁLIDA (se a coluna já não estiver preenchida)
+
         //usuário
         System.out.println("- Rodada "+contaRounds+" -");
 
@@ -149,6 +149,8 @@ public class TesteEstrutura {
         atualizarMatriz(coluna);
 
         //vez da maquina
+
+        //MONTAR COM MATH.RANDOM
 
     }
 
