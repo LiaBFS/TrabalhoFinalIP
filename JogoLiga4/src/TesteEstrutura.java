@@ -2,28 +2,26 @@ import java.util.Scanner;
 
 public class TesteEstrutura {
 
-    private int contaPartidas = 1; //pra só pedir p jogar novamente dps de ter finalizado 1 partida
     private int contaRounds = 1;
     private Scanner sc = new Scanner(System.in);
     private char corUser;
     private char corMaquina;
     private char tabuleiro[][] = new char[6][7];
     private int coluna;
+    private int ultimaLinha, ultimaColuna;
 
 
     public TesteEstrutura() {
-        int continuar = 1;
-
+    
         do{
-            if(contaPartidas>1){
-                continuar = gerenciaPartidas();
-                if(continuar==0){
-                    break;
-                }
-            }
-            
             gerarMatriz();
             partida();
+
+            int continuar = gerenciaPartidas();
+            if(continuar ==0){
+                break;
+            }
+            contaRounds = 1;
 
         } while(true);
 
@@ -49,7 +47,6 @@ public class TesteEstrutura {
                 
                 if(Character.toString(resposta).equals("s")){
                     System.out.println("- Iniciando nova partida -");
-                    contaPartidas++;
                     return 1;
                     
                 } else if(Character.toString(resposta).equals("n")){
@@ -60,50 +57,177 @@ public class TesteEstrutura {
                 }
             } while(true);
             
-        } else{
-            //ver oq fazer se não retornar 1 (ou seja, não dizer q acabou)
-            //acho q só diz q vai pro próximo round (chama round(); talvez?)
         }
-
         return -1;
-
     }
 
-    // retorna int pra fazer a checagem se finalizou partida (retorna 1) ou não (retorna 0)
+    // retorna int pra fazer a checagem se finalizou partida (retorna 1)
     private int partida(){
 
-        //deixar mais pra frente
-        
-        
         escolherCor();
         imprimirMatriz();
         int venceu = 0;
 
         do{
-            System.out.println("- Rodada "+contaRounds+" -");
-
+            
+            System.out.println("##### Rodada "+contaRounds+" #####");
+            
             jogadaUsuario();
-
-            //fazer um if caso o atualizar matriz responder que já está cheio, para fazer o usuário jogar de novo
-            checaVencedor();
-            imprimirMatriz();
+            if(checaVencedor(ultimaLinha, ultimaColuna, corUser)){
+                System.out.println("##### Fim do jogo #####");
+                System.out.println("- Parabéns! Você venceu -");
+                venceu =1;
+                break;
+            }
             jogadaMaquina();
-            checaVencedor();
-            imprimirMatriz();
+            if(checaVencedor(ultimaLinha,ultimaColuna,corMaquina)){
+                System.out.println("##### Fim do jogo #####");
+                System.out.println("- Você perdeu -");
+                venceu = 1;
+                break;
+            }
+
+            if(contaRounds == 21){
+                System.out.println("##### Fim do jogo #####");
+                System.out.println("- Empate -");
+                break;
+            }
 
             contaRounds++;
         }while(venceu==0);
         
-
-        return 0;
+        return 1;
     }
 
-    //1 caso teve vencedor 0 caso n teve
-    private int checaVencedor(){
+    private boolean checaVencedor(int linha, int coluna, char cor){
 
-        /** */
-        return 0;
+    int x = linha;
+    int y = coluna;
+    //contador de peças da mesma cor juntas
+    int cont = 1;
+
+    for(int i = 1; i <= 4; i++){
+        switch(i){
+            case 1:
+                // horizontal
+                //esquerda
+                // checa se ta na beirada e compara a próxima celula com a atual
+                while(y-1 >= 0 && tabuleiro[x][y-1] == cor){
+                    cont++;
+                    y--;
+                }
+                if(cont >= 4){
+                    return true;
+                }
+                //volta pra posição inicial
+                x = linha;
+                y = coluna;
+
+                //direita
+                while(y+1 <= 6 && tabuleiro[x][y+1] == cor){
+                    cont++;
+                    y++;
+                }
+                if(cont >= 4){
+                     return true;
+                }
+                x = linha;
+                y = coluna;
+                //reseta o contador pq já foi dos 2 lados da horizontal
+                cont = 1;
+                break;
+
+            case 2:
+                // vertical
+                //cima
+                while(x-1 >= 0 && tabuleiro[x-1][y] == cor){
+                    cont++;
+                    x--;
+                }
+                if(cont >= 4){
+                    return true;
+                }
+                x = linha;
+                y = coluna;
+
+                // baixo
+                while(x+1 <= 5 && tabuleiro[x+1][y] == cor){
+                    cont++;
+                    x++;
+                }
+                if(cont >= 4){
+                    return true;
+                }
+
+                x = linha;
+                y = coluna;
+                cont = 1;
+                break;
+
+            case 3:
+                // diagonal /
+                //fundo
+                while(x-1 >= 0 && y+1 <= 6 && tabuleiro[x-1][y+1] == cor){
+                    cont++;
+                    x--;
+                    y++;
+                }
+                if(cont >= 4){
+                     return true;
+                }
+                x = linha;
+                y = coluna;
+
+                // diagonal /
+                //topo
+                while(x+1 <= 5 && y-1 >= 0 && tabuleiro[x+1][y-1] == cor){
+                    cont++;
+                    x++;
+                    y--;
+                }
+                if(cont >= 4){
+                    return true;
+                }
+                x = linha;
+                y = coluna;
+                cont = 1;
+                break;
+
+            case 4:
+                // diagonal \
+                //topo
+                while(x-1 >= 0 && y-1 >= 0 && tabuleiro[x-1][y-1] == cor){
+                    cont++;
+                    x--;
+                    y--;
+                }
+                if(cont >= 4){
+                    return true;
+                }
+                x = linha;
+                y = coluna;
+
+                // diagonal \
+                //fundo
+                while(x+1 <= 5 && y+1 <= 6 && tabuleiro[x+1][y+1] == cor){
+                    cont++;
+                    x++;
+                    y++;
+                }
+                if(cont >= 4){
+                    return true;
+                }
+                x = linha;
+                y= coluna;
+                break;
+
+            default:
+                break;
+        }
     }
+
+    return false;
+}
 
     //vai pegar o vetor matriz do tabuleiro e colocar tudo B
     private void gerarMatriz(){
@@ -116,17 +240,30 @@ public class TesteEstrutura {
 
     }
 
-    private void atualizarMatriz(int colunaJogada, char corJogada){
+    private boolean atualizarMatriz(int colunaJogada, char corJogada){
+        int col = colunaJogada - 1;
 
-        /** pega a coluna da jogada, procura qual a primeira linha disponível e coloca a letra
-            referente a cor do player na célula **/
+        for(int linha = 5; linha >= 0; linha--){
+            if(tabuleiro[linha][col] == 'B'){
+                tabuleiro[linha][col] = corJogada;
+                ultimaLinha = linha;
+                ultimaColuna = col;
 
-        for(int linha=6; linha<=0;linha--){
-            if(tabuleiro[linha][colunaJogada]=='B'){
-                tabuleiro[linha][colunaJogada] = corJogada;
-                break;
-            } //vai ter que devolver que já está cheio
+                // se na jogadaMaquina o Math.random encontrar uma coluna válida mostrar essa msg
+                if(Character.toString(corJogada).equalsIgnoreCase(Character.toString(corMaquina))){
+                    System.out.println("Bot jogará peça na coluna: "+colunaJogada);
+                }
+                
+                imprimirMatriz();
+                return true;
+            }
         }
+
+        //só trazer a msg de aviso caso for o user, pq pra máquina n precisa
+        if(Character.toString(corJogada).equalsIgnoreCase(Character.toString(corUser))){
+            System.out.println("- Coluna cheia -\nTente novamente: ");
+        }
+        return false;
     }
 
     private void imprimirMatriz(){
@@ -144,35 +281,54 @@ public class TesteEstrutura {
 
     private void jogadaUsuario(){
 
+        System.out.println("- Sua vez! -");
         consultarMatriz();
+        boolean jogadaValida = false;
 
-        //vez do usuario
         do{
-            System.out.print("Jogar peça na coluna: ");
-            try{
-                coluna = sc.nextInt();        
-            } catch(Exception ex){
-                System.out.println();
-                System.out.println("- Resposta inválida - \nTente novamente:");
-                ex.getMessage();
-            }
-
-            if(coluna<=7 || coluna>=1){
-                break;
-            } else{
-                System.out.println();
-                System.out.println("- Resposta inválida - \nTente novamente (Escolha um número de 1 a 7):");
-            }
-        } while(true);
         
-        atualizarMatriz(coluna,corUser);
+            do{
+                System.out.print("Jogar peça na coluna: ");
+                try{
+                    coluna = sc.nextInt();        
+                } catch(Exception ex){
+                    System.out.println();
+                    System.out.println("- Resposta inválida - \nTente novamente:");
+                    ex.getMessage();
+                }
 
+                if(coluna<=7 && coluna>=1){
+                    break;
+                } else{
+                    System.out.println();
+                    System.out.println("- Resposta inválida - \nTente novamente (Escolha um número de 1 a 7):");
+                }
+            } while(true);
+        
+            jogadaValida = atualizarMatriz(coluna,corUser);
+
+
+        } while(!jogadaValida);
     }
 
     private void jogadaMaquina(){
-        //MARIA
+        
+        System.out.println("- Vez do Bot -");
+        consultarMatriz();
 
-        atualizarMatriz(coluna, corMaquina);
+        //pesquisei como usar Math.random com um intervalo e encontrei a fórmula 
+        // int numero = (int) (Math.random() * (max - min + 1) + min);
+        boolean jogadaValida = false;
+
+        do{
+            
+            int coluna = (int) (Math.random() * (7 - 1 + 1)+1);
+            jogadaValida = atualizarMatriz(coluna,corMaquina);
+
+
+        } while(!jogadaValida);
+
+         
     }
 
     //só p não ter q fazer validação toda vez
@@ -193,6 +349,7 @@ public class TesteEstrutura {
                 System.out.println("- Resposta inválida - \nTente novamente:");
             }
         } while(true);
+        System.out.println(" ");
 
     }
 
